@@ -3,6 +3,8 @@ Upload a file from an outside web form or from a form that you can access from a
 The file then goes to google drive and a link to the drive file is posted in your sheet on next available row.  
 Also an email is sent with the form and file info attached.
 
+Uses google apps script and requires that you go into scripts editor on google sheets and deploy as webapp.
+
 I have edited 2 pieces of code together from other people that allow you to do this. I mention them below.  
 I then edited it to get rid of some errors.  I really learned a lot by watching the video from paragyte.com below.  
 I used a ton of his code.  Just had to tidy up the upload.html to work from within a google sheets drop down menu iframe. 
