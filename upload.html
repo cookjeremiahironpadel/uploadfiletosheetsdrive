@@ -1,63 +1,139 @@
 <!DOCTYPE html>
 <html>
+
 <head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
 <base target="_top">
 <link rel="stylesheet" href="https://ssl.gstatic.com/docs/script/css/add-ons1.css">
 <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/pure-min.css">
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
-<!-- Style The Contact Form How Ever You Prefer -->
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> 
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+
+<!-- Style The Form How Ever You Prefer -->
+<!--<link rel="stylesheet" href="styleresponsive.css">  -->
+<style>
+body {font-family: Arial, Helvetica, sans-serif;}
+* {box-sizing: border-box;}
+
+.form-inline {  
+  display: flex;
+  flex-flow: row wrap;
+  align-items: center;
+}
+
+.form-inline label {
+  margin: 2px 2px 2px 0;
+}
+
+.form-inline input {
+  vertical-align: middle;
+  margin: 2px 2px 2px 0;
+  padding: 2px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+}
+
+.form-inline button {
+  padding: 10px 10px;
+  background-color: dodgerblue;
+  border: 1px solid #ddd;
+  color: white;
+  cursor: pointer;
+}
+
+.form-inline button:hover {
+  background-color: royalblue;
+}
+
+@media (max-width: 800px) {
+  .form-inline input {
+    margin: 2px 0;
+  }
+  
+  .form-inline {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+</style>
 
 </head>
 <body>
 
 
-<form class="gform pure-form pure-form-stacked" id="form" action="IMPORTANT PUT YOUR UNIQUE GOOGLE APPS SCRIPT WEBAPP URL HERE" target="my-iframe" method="POST" >
+<!--<h2>Responsive Inline Form</h2>-->
+
+<form class="form-inline" id="form" action="<?= webappurl; ?>" target="my-iframe" method="POST" >
   <input type="hidden" value="" name="fileContent" id="fileContent">
   <input type="hidden" value="" name="filename" id="filename">
+  <input type="hidden" value="" name="filetype" id="filetype">
+  <input type="hidden" value="" name="fileextensionfield" id="fileextensionfield">
   
-  <div class="form-elements">
   
-			<fieldset class="pure-group">
-			  <label> Name : </label><input required type="text" value="" name="name" id="name">
-			</fieldset>
+  
 			
-			<fieldset class="pure-group">
-			  <label> Email :</label> <input required type="text" value="" name="email" id="email">  
-			</fieldset>
+			  <label> Name of Company you Received Invoice From:  <span style="color: red;">*</span> </label>
+			  <input type="text" value="" name="Invoice_from_Company" id="Invoice_from_Company">
 			
-			 <input type="hidden" value="" name="contact" id="contact">
+			  <label> Description of the Invoice:<span style="color: red;">*</span></label> 
+			  <input type="text" value="" name="Invoice_Description" id="Invoice_Description">  
+			
+			  <label> Date of the Invoice:<span style="color: red;">*</span></label> 
+			  <input type="text" value="" name="Invoice_Date" id="Invoice_Date">  
+			
+		
 			 <input type="hidden" value="" name="skillsets" id="skillsets">
 			 <input type="hidden" value="" name="linkedinUrl" id="linkedinUrl">   
-			
+			 
+		 
 </form>
-<iframe name="my-iframe" src="IMPORTANT PUT YOUR UNIQUE GOOGLE APPS SCRIPT WEBAPP URL HERE" style="display: none;" onload="changed()" ></iframe>
+<iframe name="my-iframe" src="<?= webappurl; ?>" style="display: none;" onload="changed()" ></iframe>
 <p></p>
-<input required id="attach" name="attach" type="file"/>
+<label> Archivo:<span style="color: red;">*</span>&nbsp;</label><input id="attach" name="attach" type="file"/>
 <p></p>
 <p></p>
-
-
 <input value="Submit" type="button" onclick="UploadFile();" />
-<p><span id='display'></span></p>
 
 
 <script type="text/javascript">
 
-
+  $( function() {
+	 $( "#Invoice_Date" ).datepicker({
+		constrainInput: true,   // prevent letters in the input field
+		//minDate: new Date(),    // prevent selection of date older than today
+		//showOn: 'button',       // Show a button next to the text-field
+		autoSize: true,         // automatically resize the input field 
+		dateFormat: 'mm/dd/yy',  // Date Format used
+		//beforeShowDay: $.datepicker.noWeekends,     // Disable selection of weekends
+		//firstDay: 1 // Start with Monday
+	})
+   } );
+ 
+ function getFileExtension(fullfilename) {
+		return fullfilename.substring(fullfilename.lastIndexOf('.')+1, fullfilename.length) || fullfilename;
+  }
 
 
 var progressbar = document.createElement("PROGRESS");
-  progressbar.setAttribute("value", "0");
-  progressbar.setAttribute("max", "100");
+progressbar.setAttribute("value", "0");
+progressbar.setAttribute("max", "100");
+document.body.appendChild(progressbar);
+var progressbar_element = document.getElementsByTagName("PROGRESS");
+progressbar_element[0].style.visibility = 'hidden';
+console.log('progress bar complete');
 
-var change_count = 0;
+  
+  
+
+var change_count = 0; //used to see when the google apps script iframe has changed , letting you know the file has been uploaded.
 function changed() {
 
-  document.body.appendChild(progressbar);
 
 
-    if (change_count === 1 /* NUMBER OF FORM PAGES */) {
+    if (change_count === 1 /* NUMBER OF TIMES IFRAME IS LOADED */) {
 	    setTimeout(function(){progressbar.setAttribute("value", "92") }, 100);
         setTimeout(function(){progressbar.setAttribute("value", "95") }, 100);
         setTimeout(function(){progressbar.setAttribute("value", "97") }, 100);
@@ -65,12 +141,18 @@ function changed() {
 		console.log('iframe source has changed: ', change_count);
 		
 		//setTimeout(function(){alert('File Upload Completed')}, 200);
-        setTimeout(function(){document.getElementById('display').innerHTML = 
+        setTimeout(function(){document.getElementById('displaygreen').innerHTML = 
                     'File uploaded successfully.';}, 200);
 		//document.getElementById('display').innerHTML = 
          //           'File uploaded successfully.';
-		document.getElementById("form").reset()
+		
 		document.getElementById('attach').value= null;
+		document.getElementById("form").reset()
+		
+		setTimeout(function(){
+		progressbar.setAttribute("value", "0");
+		progressbar_element[0].style.visibility = 'hidden';
+		}, 2000);
 		
 		
 		
@@ -82,25 +164,67 @@ function changed() {
     }
 }
 
-      console.log('helloworld');
+      console.log(' First part of page load complete');
 
 
 
 
 function UploadFile() {
 
-//event.preventDefault()
+document.getElementById('displaygreen').innerHTML = ""
+document.getElementById('displayred').innerHTML = ""
+
+
+
+//Check required fields
+if( document.getElementById("Invoice_from_Company").value == "" ){
+    //alert("No Name Entered");
+	document.getElementById('displayred').innerHTML = "Please Enter a Name.";
+	return false;
+}
+if( document.getElementById("Invoice_Description").value == "" ){
+    document.getElementById('displayred').innerHTML = "Please Enter Invoice_Description.";
+	//alert("No Email Entered");
+	return false;
+}
+
+if( document.getElementById("Invoice_Date").value == "" ){
+    document.getElementById('displayred').innerHTML = "Please Enter a Date.";
+	//alert("No Date Entered");
+	return false;
+}	
+
+if( document.getElementById("attach").files.length == 0 ){
+    //alert("No file selected");
+	document.getElementById('displayred').innerHTML = "Please choose a file to upload.";
+	return false;
+}
+
+
+
+
+  document.getElementById('displayred').innerHTML = "";
+
+  progressbar_element[0].style.visibility = 'visible';
 
   progressbar.setAttribute("value", "22");
  
-
+ 
 
 
   var reader = new FileReader();
   var file = document.getElementById('attach').files[0];
+  
+  var fileextension = getFileExtension(file.name);
+  console.log('file extension: ', fileextension);
+		
+  
+  
   reader.onload = function(){
     document.getElementById('fileContent').value=reader.result;
 	document.getElementById('filename').value=file.name;
+	document.getElementById('filetype').value=file.type;
+	document.getElementById('fileextensionfield').value=fileextension;
     document.getElementById('form').submit();
 	}
   reader.readAsDataURL(file);
@@ -109,11 +233,17 @@ function UploadFile() {
   setTimeout(function(){progressbar.setAttribute("value", "50") }, 500);
   setTimeout(function(){progressbar.setAttribute("value", "80") }, 500);	
   
-  //file.value = '';
+
   
-  //return false 
 }
 
 </script>
+
+<p><span id='displaygreen' style="color:#008000"></span></p>
+<p><span id='displayred' style="color:#FF0000"></span></p>
+	
+
 </body>
 </html>
+
+
